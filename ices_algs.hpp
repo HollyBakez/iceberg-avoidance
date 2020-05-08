@@ -49,20 +49,45 @@ unsigned int iceberg_avoiding_exhaustive(const grid& setting) {
 //
 // The grid must be non-empty.
 unsigned int iceberg_avoiding_dyn_prog(const grid& setting) {
+  // setting == G 
 
   // grid must be non-empty.
   assert(setting.rows() > 0);
   assert(setting.columns() > 0);
 
+  const int DIM=100; // dimenstion of the grid/iceberg
+  std::vector<std::vector<unsigned>> A(DIM, std::vector<unsigned>(DIM)); // create the 2 dimensional vector named 'A' 
 
-  const int DIM=100;
-  std::vector<std::vector<unsigned>> A(DIM, std::vector<unsigned>(DIM));
-
-  A[0][0] = 1;
+  A[0][0] = 1; // base case
     
   // TODO: implement the dynamic programming algorithm, then delete this
   // comment.
-  
+  int from_above;
+  int from_left;
+  for(int i = 0; i < setting.rows(); i++){
+    for(int j = 0; j < setting.columns(); j++){
+      
+ 
+      if (setting.get(i,j) == CELL_ICEBERG){
+        A[i][j] = 0;
+        continue;
+      }
+      from_above = from_left = 0;
+      
+      if(i > 0 && A[i-1][j] != 0){ // checking from left to move down
+        from_above = A[i-1][j];
+      }
+
+      if(j > 0 && A[i][j-1] != 0){ // checking from above to move right
+        from_left = A[i][j-1];
+      }
+
+      if( i || j){ 
+      A[i][j] = from_above + from_left;
+      }
+
+    }
+  }
   return A[setting.rows()-1][setting.columns()-1];
 }
 
