@@ -1,4 +1,4 @@
-///////////////////////////////////////////////////////////////////////////////
+ ///////////////////////////////////////////////////////////////////////////////
 // crossing_algs.hpp
 //
 // Algorithms that solve the iceberg avoiding problem.
@@ -27,7 +27,7 @@ namespace ices {
 //
 // The grid must be non-empty.
 unsigned int iceberg_avoiding_exhaustive(const grid& setting) {
-    
+
   // grid must be non-empty.
   assert(setting.rows() > 0);
   assert(setting.columns() > 0);
@@ -37,9 +37,29 @@ unsigned int iceberg_avoiding_exhaustive(const grid& setting) {
   assert(steps < 64);
 
   unsigned int count_paths = 0;
-    
+
   // TODO: implement the exhaustive optimization algorithm, then delete this
   // comment.
+  
+  for (size_t bits = 0; bits <= (pow(2,steps) - 1); bits++) {
+    // initialize path with only STEP_DIRECTION_START
+    path candidate(setting);
+
+    for (size_t k = 0; k <= steps - 1; k++){
+      size_t bit = (bits >> k) & 1;
+
+      if (bit == 1) {
+        if (!candidate.is_step_valid(STEP_DIRECTION_RIGHT)) continue;
+        candidate.add_step(STEP_DIRECTION_RIGHT);
+      } else {
+        if (!candidate.is_step_valid(STEP_DIRECTION_DOWN)) continue;
+        candidate.add_step(STEP_DIRECTION_DOWN);
+      }
+    }
+    count_paths++;
+  }
+
+  std::cout << std::endl << "Num Paths: " << count_paths << std::endl;
 
   return count_paths;
 }
@@ -59,10 +79,10 @@ unsigned int iceberg_avoiding_dyn_prog(const grid& setting) {
   std::vector<std::vector<unsigned>> A(DIM, std::vector<unsigned>(DIM));
 
   A[0][0] = 1;
-    
+
   // TODO: implement the dynamic programming algorithm, then delete this
   // comment.
-  
+
   return A[setting.rows()-1][setting.columns()-1];
 }
 
