@@ -40,26 +40,38 @@ unsigned int iceberg_avoiding_exhaustive(const grid& setting) {
 
   // TODO: implement the exhaustive optimization algorithm, then delete this
   // comment.
-  
+
   for (size_t bits = 0; bits <= (pow(2,steps) - 1); bits++) {
     // initialize path with only STEP_DIRECTION_START
     path candidate(setting);
+
+    bool valid = true;
 
     for (size_t k = 0; k <= steps - 1; k++){
       size_t bit = (bits >> k) & 1;
 
       if (bit == 1) {
-        if (!candidate.is_step_valid(STEP_DIRECTION_RIGHT)) continue;
+        if (!candidate.is_step_valid(STEP_DIRECTION_RIGHT)) {
+          valid = false;
+          continue;
+        }
+
         candidate.add_step(STEP_DIRECTION_RIGHT);
+
       } else {
-        if (!candidate.is_step_valid(STEP_DIRECTION_DOWN)) continue;
+        if (!candidate.is_step_valid(STEP_DIRECTION_DOWN)) {
+          valid = false;
+          continue;
+        }
+
         candidate.add_step(STEP_DIRECTION_DOWN);
       }
     }
-    count_paths++;
-  }
 
-  std::cout << std::endl << "Num Paths: " << count_paths << std::endl;
+    if (valid) {
+      count_paths++;
+    }
+  }
 
   return count_paths;
 }
