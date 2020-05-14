@@ -16,7 +16,8 @@
 #include <iostream>
 
 #include "ices_types.hpp"
-
+//testing 
+#include <cmath>
 namespace ices {
 // Solve the iceberg avoiding problem for the given grid, using an exhaustive
 // optimization algorithm.
@@ -32,15 +33,43 @@ unsigned int iceberg_avoiding_exhaustive(const grid& setting) {
   assert(setting.rows() > 0);
   assert(setting.columns() > 0);
 
-  // Compute the path length, and check that it is legal.
-  const size_t steps = setting.rows() + setting.columns() - 2;
+  // Compute the path length, and check that it is legal. 
+  const size_t steps = setting.rows() + setting.columns() - 2; // len = r + c - 2
   assert(steps < 64);
 
-  unsigned int count_paths = 0;
+  unsigned int count_paths = 0; // counter = 0 
     
   // TODO: implement the exhaustive optimization algorithm, then delete this
   // comment.
+  
+  path candidate(setting);
 
+  long unsigned int bit;
+
+  for (long unsigned int bits = 0; bits <= pow(2,steps)-1; bits++){
+    
+    path candidate(setting); // candidate = [start]
+
+    for (long unsigned int k = 0; k < steps-1; k++){
+      
+      bit = (bits>>k) & 1;
+
+      if (bit == 1){
+        candidate.add_step(STEP_DIRECTION_RIGHT);
+
+      }
+      else{
+        candidate.add_step(STEP_DIRECTION_DOWN);
+      }
+
+      if ( candidate.is_step_valid(STEP_DIRECTION_RIGHT) || candidate.is_step_valid(STEP_DIRECTION_DOWN)){
+        count_paths ++ ;
+      }
+  
+    }
+  }
+
+  
   return count_paths;
 }
 
@@ -49,6 +78,7 @@ unsigned int iceberg_avoiding_exhaustive(const grid& setting) {
 //
 // The grid must be non-empty.
 unsigned int iceberg_avoiding_dyn_prog(const grid& setting) {
+  
   // setting == G 
 
   // grid must be non-empty.
