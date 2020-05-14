@@ -33,47 +33,47 @@ unsigned int iceberg_avoiding_exhaustive(const grid& setting) {
   assert(setting.columns() > 0);
 
   // Compute the path length, and check that it is legal.
-  const size_t steps = setting.rows() + setting.columns() - 2;
+  const size_t steps = setting.rows() + setting.columns() - 2; // len = r + c - 2
   assert(steps < 64);
 
-  unsigned int count_paths = 0;
+  unsigned int count_paths = 0; // counter = 0 
 
   // TODO: implement the exhaustive optimization algorithm, then delete this
   // comment.
 
-  for (size_t bits = 0; bits <= (pow(2,steps) - 1); bits++) {
+  for (size_t bits = 0; bits <= (pow(2,steps) - 1); bits++) { // for bits from 0 to 2^len-1 inclusive
     // initialize path with only STEP_DIRECTION_START
-    path candidate(setting);
+    path candidate(setting); // candidate = [start]
 
-    bool valid = true;
+    bool valid = true; // initialize flag to true, if not changed then valid path
 
     for (size_t k = 0; k <= steps - 1; k++){
       size_t bit = (bits >> k) & 1;
 
       if (bit == 1) {
-        if (!candidate.is_step_valid(STEP_DIRECTION_RIGHT)) {
-          valid = false;
+        if (!candidate.is_step_valid(STEP_DIRECTION_RIGHT)) { // check first if the direction right is a valid step
+          valid = false; // if not change flag to false
           continue;
         }
 
-        candidate.add_step(STEP_DIRECTION_RIGHT);
+        candidate.add_step(STEP_DIRECTION_RIGHT); // add the step direction right if valid
 
       } else {
-        if (!candidate.is_step_valid(STEP_DIRECTION_DOWN)) {
-          valid = false;
+        if (!candidate.is_step_valid(STEP_DIRECTION_DOWN)) { // check first if the direction down is a valid step
+          valid = false; // if not flag to false
           continue;
         }
 
-        candidate.add_step(STEP_DIRECTION_DOWN);
+        candidate.add_step(STEP_DIRECTION_DOWN); // add the step direction down if valid
       }
     }
 
-    if (valid) {
-      count_paths++;
+    if (valid) { // if candidate stays inside the grid and never crosses an X cell
+      count_paths++; // add to the counter
     }
   }
 
-  return count_paths;
+  return count_paths; // return counter
 }
 
 // Solve the iceberg avoiding problem for the given grid, using a dynamic
@@ -94,13 +94,15 @@ unsigned int iceberg_avoiding_dyn_prog(const grid& setting) {
 
   // TODO: implement the dynamic programming algorithm, then delete this
   // comment.
+  // initialize  from_above and from_left cases
+  // general cases
   int from_above;
   int from_left;
   for(int i = 0; i < setting.rows(); i++){
     for(int j = 0; j < setting.columns(); j++){
 
 
-      if (setting.get(i,j) == CELL_ICEBERG){
+      if (setting.get(i,j) == CELL_ICEBERG){ // check if the there is an iceberg
         A[i][j] = 0;
         continue;
       }
@@ -114,8 +116,8 @@ unsigned int iceberg_avoiding_dyn_prog(const grid& setting) {
         from_left = A[i][j-1];
       }
 
-      if( i || j){
-      A[i][j] = from_above + from_left;
+      if( i || j){ // if from_above and from_left  are not None 
+      A[i][j] = from_above + from_left; // sum of from_above and from_left
       }
 
     }
